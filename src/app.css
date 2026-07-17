@@ -1,0 +1,480 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  color: var(--fg);
+  background: transparent;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.window {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg);
+  border-radius: var(--radius-window);
+  box-shadow: var(--shadow-window);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* 标题栏 */
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  padding: 0 var(--s-2) 0 var(--s-3);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: var(--fs-title);
+  color: var(--fg-secondary);
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.titlebar-actions {
+  display: flex;
+  gap: var(--s-1);
+}
+
+.icon-btn {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--fg-secondary);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.icon-btn:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+.icon-btn i {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.icon-btn.is-locked {
+  color: var(--accent);
+}
+
+/* 工具栏 */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: var(--s-1) var(--s-2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.tool-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 var(--s-1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--fg);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--font-body);
+}
+
+.tool-btn:hover {
+  background: var(--surface-hover);
+}
+
+.tool-btn i {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.tool-btn.is-active {
+  background: var(--surface-active);
+  color: var(--accent);
+}
+
+.divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 var(--s-1);
+}
+
+/* 编辑器 */
+.editor {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-3);
+  user-select: text;
+  line-height: 1.6;
+  cursor: text;
+}
+
+.editor:focus,
+.editor .ProseMirror:focus {
+  outline: none;
+}
+
+.editor .ProseMirror {
+  min-height: 100%;
+}
+
+.editor h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0.7em 0 0.3em;
+  line-height: 1.3;
+}
+
+.editor h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0.5em 0 0.3em;
+  line-height: 1.3;
+}
+
+.editor p {
+  margin: 0.25em 0;
+}
+
+.editor ul {
+  list-style: disc !important;
+  list-style-type: disc !important;
+  padding-left: 1.5em;
+  margin: 0.3em 0;
+}
+
+.editor ol {
+  list-style: decimal !important;
+  list-style-type: decimal !important;
+  padding-left: 1.5em;
+  margin: 0.3em 0;
+}
+
+.editor li {
+  margin: 0.1em 0;
+}
+
+.editor ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.editor ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-1);
+}
+
+.editor ul[data-type="taskList"] li label {
+  margin-top: 3px;
+}
+
+.editor ul[data-type="taskList"] li[data-checked="true"] > div {
+  text-decoration: line-through;
+  color: var(--fg-tertiary);
+}
+
+.editor code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surface);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.editor pre {
+  background: var(--surface);
+  padding: var(--s-2) var(--s-3);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  overflow-x: auto;
+  margin: 0.4em 0;
+}
+
+.editor pre code {
+  background: none;
+  padding: 0;
+}
+
+.editor a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.editor a:hover {
+  text-decoration: underline;
+}
+
+.editor .is-empty::before {
+  content: attr(data-placeholder);
+  color: var(--fg-tertiary);
+  float: left;
+  pointer-events: none;
+  height: 0;
+}
+
+/* 状态栏 */
+.statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s-1) var(--s-3);
+  border-top: 1px solid var(--border);
+  font-size: var(--fs-sm);
+  color: var(--fg-tertiary);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.status.saving {
+  color: var(--fg-secondary);
+}
+
+.status.unsaved {
+  color: var(--accent);
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 设置面板 */
+.settings-panel {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 100;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.settings-card {
+  width: 88%;
+  max-width: 360px;
+  max-height: 80%;
+  overflow-y: auto;
+  background: var(--bg-solid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-window);
+  box-shadow: var(--shadow-window);
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s-2) var(--s-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-title {
+  font-size: var(--fs-base);
+  font-weight: 600;
+}
+
+.settings-body {
+  padding: var(--s-2) var(--s-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.setting-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.setting-label {
+  font-size: var(--fs-sm);
+  color: var(--fg-secondary);
+}
+
+.setting-hint {
+  font-size: 11px;
+  color: var(--fg-tertiary);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.setting-control {
+  display: flex;
+  gap: var(--s-1);
+}
+
+.setting-input,
+.setting-select {
+  flex: 1;
+  height: 28px;
+  padding: 0 var(--s-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--bg-solid);
+  color: var(--fg);
+  font-size: var(--fs-sm);
+  font-family: var(--font-body);
+}
+
+.setting-input:focus,
+.setting-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.setting-input[readonly] {
+  background: var(--surface);
+}
+
+.setting-btn {
+  height: 28px;
+  padding: 0 var(--s-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--fg);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+
+.setting-btn:hover {
+  background: var(--surface-hover);
+}
+
+.setting-range {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.setting-toggle {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.setting-input.recording {
+  border-color: var(--accent);
+  color: var(--fg-tertiary);
+  font-style: italic;
+}
+
+/* 滚动条 */
+.editor::-webkit-scrollbar,
+.settings-card::-webkit-scrollbar {
+  display: none;
+}
+.editor,
+.settings-card {
+  scrollbar-width: none;
+}
+
+/* 悬停提示 */
+.tool-btn,
+.icon-btn {
+  position: relative;
+}
+.tool-btn[data-i18n-title]:hover::after,
+.icon-btn[data-i18n-title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-solid);
+  color: var(--fg);
+  padding: 3px 7px;
+  border-radius: 5px;
+  font-size: 11px;
+  white-space: nowrap;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-window);
+  z-index: 50;
+  pointer-events: none;
+}
+
+/* 窗口控制按钮（红黄绿） */
+.traffic-lights {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-right: var(--s-2);
+}
+
+.tl {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+.tl::before {
+  opacity: 0;
+}
+
+.traffic-lights:hover .tl::before {
+  opacity: 1;
+}
+
+.tl-close::before { content: "✕"; }
+.tl-min::before { content: "−"; }
+.tl-max::before { content: "+"; }
+
+.tl-close { background: #ff5f57; }
+.tl-min { background: #febc2e; }
+.tl-max { background: #28c840; }

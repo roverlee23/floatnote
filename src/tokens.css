@@ -1,0 +1,79 @@
+:root {
+  /* 透明度（窗口整体不透明度，0~1） */
+  --window-opacity: 0.85;
+
+  /* 表面 */
+  --bg: rgba(255, 255, 255, var(--window-opacity));
+  --bg-solid: #ffffff;
+  --surface: rgba(0, 0, 0, 0.05);
+  --surface-hover: rgba(0, 0, 0, 0.09);
+  --surface-active: rgba(0, 0, 0, 0.12);
+
+  /* 文字层级 */
+  --fg: #1d1d1f;
+  --fg-secondary: #6e6e73;
+  --fg-tertiary: #a1a1a6;
+
+  /* 边框 */
+  --border: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.18);
+
+  /* 强调 */
+  --accent: #007aff;
+  --accent-hover: #0066d6;
+
+  /* 字体 */
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC",
+    "Segoe UI", Roboto, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  --fs-base: 14px;
+  --fs-sm: 12px;
+  --fs-title: 13px;
+
+  /* 圆角 */
+  --radius-window: 12px;
+  --radius-control: 6px;
+
+  /* 间距 */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+
+  /* 阴影 */
+  --shadow-window: 0 10px 40px rgba(0, 0, 0, 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: rgba(30, 30, 34, var(--window-opacity));
+    --bg-solid: #1e1e22;
+    --surface: rgba(255, 255, 255, 0.07);
+    --surface-hover: rgba(255, 255, 255, 0.13);
+    --surface-active: rgba(255, 255, 255, 0.18);
+    --fg: #f5f5f7;
+    --fg-secondary: #a1a1a6;
+    --fg-tertiary: #6e6e73;
+    --border: rgba(255, 255, 255, 0.12);
+    --border-strong: rgba(255, 255, 255, 0.22);
+    --accent: #0a84ff;
+    --accent-hover: #409cff;
+    --shadow-window: 0 10px 40px rgba(0, 0, 0, 0.5);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: rgba(30, 30, 34, var(--window-opacity));
+  --bg-solid: #1e1e22;
+  --surface: rgba(255, 255, 255, 0.07);
+  --surface-hover: rgba(255, 255, 255, 0.13);
+  --surface-active: rgba(255, 255, 255, 0.18);
+  --fg: #f5f5f7;
+  --fg-secondary: #a1a1a6;
+  --fg-tertiary: #6e6e73;
+  --border: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.22);
+  --accent: #0a84ff;
+  --accent-hover: #409cff;
+  --shadow-window: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
