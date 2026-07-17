@@ -196,7 +196,7 @@ fn set_settings(app: tauri::AppHandle, settings: Settings) -> Result<(), String>
         if let Some(sc) = parse_shortcut(&sc_str) {
             let _ = gs.on_shortcut(sc, |app, _shortcut, event| {
                 if event.state() == ShortcutState::Pressed {
-                    toggle_window(app);
+                    activate_window(app, ActivationSource::Shortcut);
                 }
             });
         }
@@ -324,6 +324,59 @@ fn set_macos_window_behavior(window: &tauri::WebviewWindow) {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
+enum ActivationSource {
+    Dock,
+    TrayIcon,
+    Shortcut,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum ActivationAction {
+    ShowAndFocus,
+    Toggle,
+}
+
+fn activation_action(source: ActivationSource) -> ActivationAction {
+    match source {
+        ActivationSource::Dock | ActivationSource::TrayIcon => ActivationAction::ShowAndFocus,
+        ActivationSource::Shortcut => ActivationAction::Toggle,
+    }
+}
+
+fn activate_window(app: &tauri::AppHandle, source: ActivationSource) {
+    match activation_action(source) {
+        ActivationAction::ShowAndFocus => show_and_focus_window(app),
+        ActivationAction::Toggle => toggle_window(app),
+    }
+}
+
+fn show_and_focus_window(app: &tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.unminimize();
+        let _ = window.show();
+        set_macos_window_behavior(&window);
+
+        #[cfg(target_os = "macos")]
+        {
+            use objc2_app_kit::NSWindow;
+            if let Ok(ptr) = window.ns_window() {
+                unsafe {
+                    let ns_window: &NSWindow = (ptr as *mut NSWindow).as_ref().expect("NSWindow");
+                    // Raise within the current desktop/full-screen space without switching spaces.
+                    ns_window.orderFrontRegardless();
+                    ns_window.makeKeyWindow();
+                }
+            }
+        }
+
+        #[cfg(not(target_os = "macos"))]
+        {
+            let _ = window.set_focus();
+        }
+    }
+}
+
 fn toggle_window(app: &tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
         if window.is_visible().unwrap_or(false) {
@@ -333,6 +386,22 @@ fn toggle_window(app: &tauri::AppHandle) {
             set_macos_window_behavior(&window);
             // 不调 set_focus：makeKeyAndOrderFront 会触发桌面切换
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{activation_action, ActivationAction, ActivationSource};
+
+    #[test]
+    fn dock_and_tray_activation_always_show_window() {
+        assert_eq!(activation_action(ActivationSource::Dock), ActivationAction::ShowAndFocus);
+        assert_eq!(activation_action(ActivationSource::TrayIcon), ActivationAction::ShowAndFocus);
+    }
+
+    #[test]
+    fn shortcut_keeps_toggle_behavior() {
+        assert_eq!(activation_action(ActivationSource::Shortcut), ActivationAction::Toggle);
     }
 }
 
@@ -372,8 +441,7 @@ pub fn run() {
                         "toggle" => toggle_window(app),
                         "settings" => {
                             if let Some(window) = app.get_webview_window("main") {
-                                let _ = window.show();
-                                let _ = window.set_focus();
+                                show_and_focus_window(app);
                                 let _ = window.emit("open-settings", ());
                             }
                         }
@@ -382,7 +450,7 @@ pub fn run() {
                     })
                     .on_tray_icon_event(|tray, event| {
                         if let TrayIconEvent::Click { button: MouseButton::Left, .. } = event {
-                            toggle_window(tray.app_handle());
+                            activate_window(tray.app_handle(), ActivationSource::TrayIcon);
                         }
                     })
                     .build(app)?;
@@ -393,7 +461,7 @@ pub fn run() {
                     app.global_shortcut()
                         .on_shortcut(sc, |app, _shortcut, event| {
                             if event.state() == ShortcutState::Pressed {
-                                toggle_window(app);
+                                activate_window(app, ActivationSource::Shortcut);
                             }
                         })?;
                 }
@@ -420,6 +488,12 @@ pub fn run() {
             save_window_rect,
             make_key_window,
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building Tauri application")
+        .run(|app, event| {
+            #[cfg(target_os = "macos")]
+            if let tauri::RunEvent::Reopen { .. } = event {
+                activate_window(app, ActivationSource::Dock);
+            }
+        })
 }
