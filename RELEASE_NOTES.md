@@ -1,4 +1,4 @@
-# FloatNote v0.5.0
+# FloatNote v0.6.0
 
 <p align="center"><a href="#english">English</a> · <a href="#中文版">中文</a></p>
 
@@ -10,16 +10,16 @@ FloatNote is a floating notes app for macOS. Summon it anywhere, write while vie
 
 ### Download
 
-**[Download FloatNote v0.5.0 for Apple Silicon](https://github.com/roverlee23/floatnote/releases/download/v0.5.0/FloatNote_0.5.0_aarch64.dmg)**
+**[Download FloatNote v0.6.0 for Apple Silicon](https://github.com/roverlee23/floatnote/releases/download/v0.6.0/FloatNote_0.6.0_aarch64.dmg)**
 
 ### Highlights
 
 - **Works across apps and full-screen spaces**: summon FloatNote with the default `Cmd+Shift+N` shortcut while using another app, including a full-screen app.
-- **Normal window behavior when unpinned**: in a full-screen space, clicking outside FloatNote's functional area sends it to the background; on the desktop, it follows normal app window layering.
-- **Pin to stay on top**: once pinned, FloatNote remains above the current app and does not hide when it loses focus. When you switch or swipe between spaces, it follows the current space.
-- **Bring it forward anytime**: clicking the Dock icon, menu bar icon, or using the shortcut brings FloatNote to the foreground and makes it ready for editing.
+- **Clear window behavior**: when unpinned, FloatNote follows normal app layering on the desktop; in a full-screen space, clicking outside its functional area sends it to the background.
+- **Pin to stay on top**: once pinned, FloatNote remains above the current app and follows you between desktop and full-screen spaces.
+- **Quick access**: use the shortcut to toggle FloatNote, or click the menu bar icon to bring it to the front for editing.
 - **Markdown + Obsidian**: notes are saved locally as Markdown files, with an optional storage folder for an Obsidian vault.
-- **Rich text editing**: bold, italic, underline, strikethrough, headings, bullet and numbered lists, tasks, and code blocks.
+- **Rich text + tables**: bold, italic, underline, strikethrough, headings, bullet and numbered lists, tasks, code blocks, and lightweight tables with row/column controls.
 - **10 languages**: Chinese, English, Spanish, French, German, Italian, Japanese, Arabic (RTL), Portuguese, and Russian.
 
 ### Install
@@ -62,16 +62,16 @@ FloatNote 是一款 macOS 悬浮便签工具。你可以在任何界面快速调
 
 ### 下载
 
-**[下载 FloatNote v0.5.0（Apple Silicon）](https://github.com/roverlee23/floatnote/releases/download/v0.5.0/FloatNote_0.5.0_aarch64.dmg)**
+**[下载 FloatNote v0.6.0（Apple Silicon）](https://github.com/roverlee23/floatnote/releases/download/v0.6.0/FloatNote_0.6.0_aarch64.dmg)**
 
 ### 核心特色
 
 - **支持跨 App 和全屏空间使用**：在其他 App 中，包括全屏 App 内，都可以通过默认快捷键 `Cmd+Shift+N` 调起 FloatNote。
-- **未图钉时遵循普通窗口逻辑**：在全屏界面，点击 FloatNote 功能区域以外的位置，FloatNote 退到后台；在桌面上则遵循普通 App 的窗口层级关系。
-- **图钉后保持最上层**：激活图钉后，FloatNote 会一直浮在当前 App 上方，不因失去焦点而隐藏；用户切换或滑动不同桌面/全屏空间时，FloatNote 会跟随当前空间。
-- **随时拉回前台**：在任何界面点击 Dock 图标、菜单栏图标，或使用快捷键，都会将 FloatNote 拉到前台并准备编辑。
+- **清晰的窗口逻辑**：未图钉时，在全屏界面点击 FloatNote 功能区域以外的位置会退到后台；在桌面上则遵循普通 App 的窗口层级关系。
+- **图钉后保持最上层**：激活图钉后，FloatNote 会一直浮在当前 App 上方，并会随你在桌面与全屏空间间切换。
+- **快速拉起**：使用快捷键可切换 FloatNote；点击菜单栏图标可将它拉到前台并准备编辑。
 - **Markdown + Obsidian**：笔记以 Markdown 文件保存在本地，可选择 Obsidian 库作为存储位置。
-- **富文本编辑**：支持加粗、斜体、下划线、删除线、标题、无序/有序列表、待办和代码块。
+- **富文本与表格**：支持加粗、斜体、下划线、删除线、标题、无序/有序列表、待办、代码块，以及可增删行列的轻量表格。
 - **10 种语言**：中文、英文、西班牙语、法语、德语、意大利语、日语、阿拉伯语（RTL）、葡萄牙语和俄语。
 
 ### 安装

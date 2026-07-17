@@ -4,7 +4,7 @@ FloatNote 是一款 macOS 悬浮便签：随时调起、浮在其他窗口上方
 
 ## 下载
 
-**[下载 FloatNote v0.5.0（Apple Silicon / DMG）](https://github.com/roverlee23/floatnote/releases/download/v0.5.0/FloatNote_0.5.0_aarch64.dmg)**
+**[下载 FloatNote v0.6.0（Apple Silicon / DMG）](https://github.com/roverlee23/floatnote/releases/download/v0.6.0/FloatNote_0.6.0_aarch64.dmg)**
 
 系统要求：macOS 13 或更高版本，Apple Silicon（M1/M2/M3/M4）。
 
@@ -45,6 +45,8 @@ npm run tauri dev
 ```bash
 npm run tauri build
 ```
+
+窗口、全屏空间与图钉的实现约定见[窗口与全屏空间策略](docs/窗口与全屏空间策略.md)。
 
 ## 许可证
 

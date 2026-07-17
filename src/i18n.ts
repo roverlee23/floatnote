@@ -1,7 +1,8 @@
 const dict: Record<string, Record<string, string>> = {
   zh: {
     title: "便签", new_note: "新建便签", lock: "锁定置顶", settings: "设置", close: "关闭",
-    bold: "加粗", italic: "斜体", underline: "下划线", strike: "删除线",
+    bold: "加粗", italic: "斜体", underline: "下划线", strike: "删除线", table: "表格", delete_table: "删除表格",
+    add_row: "添加行", delete_row: "删除行", add_column: "添加列", delete_column: "删除列",
     h2: "标题", h3: "副标题", bullet: "无序列表", ordered: "有序列表", task: "待办", code: "代码块", link: "链接",
     ready: "已就绪", saving: "保存中…", saved: "已保存", new_short: "新便签",
     load_fail: "加载失败", save_fail: "保存失败", init_fail: "初始化失败", error_prefix: "错误",
@@ -14,7 +15,8 @@ const dict: Record<string, Record<string, string>> = {
   },
   en: {
     title: "Notes", new_note: "New note", lock: "Lock on top", settings: "Settings", close: "Close",
-    bold: "Bold", italic: "Italic", underline: "Underline", strike: "Strikethrough",
+    bold: "Bold", italic: "Italic", underline: "Underline", strike: "Strikethrough", table: "Table", delete_table: "Delete table",
+    add_row: "Add row", delete_row: "Delete row", add_column: "Add column", delete_column: "Delete column",
     h2: "Heading 2", h3: "Heading 3", bullet: "Bullet list", ordered: "Numbered list", task: "Task", code: "Code block", link: "Link",
     ready: "Ready", saving: "Saving…", saved: "Saved", new_short: "New note",
     load_fail: "Load failed", save_fail: "Save failed", init_fail: "Init failed", error_prefix: "Error",
@@ -27,7 +29,8 @@ const dict: Record<string, Record<string, string>> = {
   },
   es: {
     title: "Notas", new_note: "Nueva nota", lock: "Fijar arriba", settings: "Ajustes", close: "Cerrar",
-    bold: "Negrita", italic: "Cursiva", underline: "Subrayado", strike: "Tachado",
+    bold: "Negrita", italic: "Cursiva", underline: "Subrayado", strike: "Tachado", table: "Tabla",
+    add_row: "Añadir fila", delete_row: "Eliminar fila", add_column: "Añadir columna", delete_column: "Eliminar columna",
     h2: "Título 2", h3: "Título 3", bullet: "Lista", ordered: "Lista numerada", task: "Tarea", code: "Código", link: "Enlace",
     ready: "Listo", saving: "Guardando…", saved: "Guardado", new_short: "Nueva nota",
     load_fail: "Error al cargar", save_fail: "Error al guardar", init_fail: "Error de inicio", error_prefix: "Error",
@@ -40,7 +43,8 @@ const dict: Record<string, Record<string, string>> = {
   },
   fr: {
     title: "Notes", new_note: "Nouvelle note", lock: "Épingler", settings: "Réglages", close: "Fermer",
-    bold: "Gras", italic: "Italique", underline: "Souligné", strike: "Barré",
+    bold: "Gras", italic: "Italique", underline: "Souligné", strike: "Barré", table: "Tableau",
+    add_row: "Ajouter une ligne", delete_row: "Supprimer la ligne", add_column: "Ajouter une colonne", delete_column: "Supprimer la colonne",
     h2: "Titre 2", h3: "Titre 3", bullet: "Liste", ordered: "Liste numérotée", task: "Tâche", code: "Code", link: "Lien",
     ready: "Prêt", saving: "Enregistrement…", saved: "Enregistré", new_short: "Nouvelle note",
     load_fail: "Échec du chargement", save_fail: "Échec de l'enregistrement", init_fail: "Échec de l'init", error_prefix: "Erreur",
@@ -53,7 +57,8 @@ const dict: Record<string, Record<string, string>> = {
   },
   de: {
     title: "Notizen", new_note: "Neue Notiz", lock: "Oben halten", settings: "Einstellungen", close: "Schließen",
-    bold: "Fett", italic: "Kursiv", underline: "Unterstrichen", strike: "Durchgestrichen",
+    bold: "Fett", italic: "Kursiv", underline: "Unterstrichen", strike: "Durchgestrichen", table: "Tabelle",
+    add_row: "Zeile hinzufügen", delete_row: "Zeile löschen", add_column: "Spalte hinzufügen", delete_column: "Spalte löschen",
     h2: "Überschrift 2", h3: "Überschrift 3", bullet: "Liste", ordered: "Nummerierte Liste", task: "Aufgabe", code: "Code", link: "Link",
     ready: "Bereit", saving: "Speichern…", saved: "Gespeichert", new_short: "Neue Notiz",
     load_fail: "Laden fehlgeschlagen", save_fail: "Speichern fehlgeschlagen", init_fail: "Init fehlgeschlagen", error_prefix: "Fehler",
@@ -66,7 +71,8 @@ const dict: Record<string, Record<string, string>> = {
   },
   it: {
     title: "Note", new_note: "Nuova nota", lock: "Fissa in alto", settings: "Impostazioni", close: "Chiudi",
-    bold: "Grassetto", italic: "Corsivo", underline: "Sottolineato", strike: "Barrato",
+    bold: "Grassetto", italic: "Corsivo", underline: "Sottolineato", strike: "Barrato", table: "Tabella",
+    add_row: "Aggiungi riga", delete_row: "Elimina riga", add_column: "Aggiungi colonna", delete_column: "Elimina colonna",
     h2: "Titolo 2", h3: "Titolo 3", bullet: "Elenco", ordered: "Elenco numerato", task: "Attività", code: "Codice", link: "Link",
     ready: "Pronto", saving: "Salvataggio…", saved: "Salvato", new_short: "Nuova nota",
     load_fail: "Caricamento fallito", save_fail: "Salvataggio fallito", init_fail: "Init fallita", error_prefix: "Errore",
@@ -79,7 +85,8 @@ const dict: Record<string, Record<string, string>> = {
   },
   ja: {
     title: "ノート", new_note: "新規ノート", lock: "最前面に固定", settings: "設定", close: "閉じる",
-    bold: "太字", italic: "斜体", underline: "下線", strike: "取り消し線",
+    bold: "太字", italic: "斜体", underline: "下線", strike: "取り消し線", table: "表",
+    add_row: "行を追加", delete_row: "行を削除", add_column: "列を追加", delete_column: "列を削除",
     h2: "見出し2", h3: "見出し3", bullet: "箇条書き", ordered: "番号付きリスト", task: "タスク", code: "コード", link: "リンク",
     ready: "準備完了", saving: "保存中…", saved: "保存済み", new_short: "新規ノート",
     load_fail: "読み込み失敗", save_fail: "保存失敗", init_fail: "初期化失敗", error_prefix: "エラー",
@@ -92,7 +99,8 @@ const dict: Record<string, Record<string, string>> = {
   },
   ar: {
     title: "ملاحظات", new_note: "ملاحظة جديدة", lock: "تثبيت بالأعلى", settings: "الإعدادات", close: "إغلاق",
-    bold: "عريض", italic: "مائل", underline: "تحته خط", strike: "يتوسطه خط",
+    bold: "عريض", italic: "مائل", underline: "تحته خط", strike: "يتوسطه خط", table: "جدول",
+    add_row: "إضافة صف", delete_row: "حذف صف", add_column: "إضافة عمود", delete_column: "حذف عمود",
     h2: "عنوان 2", h3: "عنوان 3", bullet: "قائمة نقطية", ordered: "قائمة مرقمة", task: "مهمة", code: "كود", link: "رابط",
     ready: "جاهز", saving: "جارٍ الحفظ…", saved: "تم الحفظ", new_short: "ملاحظة جديدة",
     load_fail: "فشل التحميل", save_fail: "فشل الحفظ", init_fail: "فشل التهيئة", error_prefix: "خطأ",
@@ -105,7 +113,8 @@ const dict: Record<string, Record<string, string>> = {
   },
   pt: {
     title: "Notas", new_note: "Nova nota", lock: "Fixar no topo", settings: "Configurações", close: "Fechar",
-    bold: "Negrito", italic: "Itálico", underline: "Sublinhado", strike: "Tachado",
+    bold: "Negrito", italic: "Itálico", underline: "Sublinhado", strike: "Tachado", table: "Tabela",
+    add_row: "Adicionar linha", delete_row: "Excluir linha", add_column: "Adicionar coluna", delete_column: "Excluir coluna",
     h2: "Título 2", h3: "Título 3", bullet: "Lista", ordered: "Lista numerada", task: "Tarefa", code: "Código", link: "Link",
     ready: "Pronto", saving: "Salvando…", saved: "Salvo", new_short: "Nova nota",
     load_fail: "Falha ao carregar", save_fail: "Falha ao salvar", init_fail: "Falha na init", error_prefix: "Erro",
@@ -118,7 +127,8 @@ const dict: Record<string, Record<string, string>> = {
   },
   ru: {
     title: "Заметки", new_note: "Новая заметка", lock: "Закрепить", settings: "Настройки", close: "Закрыть",
-    bold: "Жирный", italic: "Курсив", underline: "Подчёркнутый", strike: "Зачёркнутый",
+    bold: "Жирный", italic: "Курсив", underline: "Подчёркнутый", strike: "Зачёркнутый", table: "Таблица",
+    add_row: "Добавить строку", delete_row: "Удалить строку", add_column: "Добавить столбец", delete_column: "Удалить столбец",
     h2: "Заголовок 2", h3: "Заголовок 3", bullet: "Список", ordered: "Нумерованный список", task: "Задача", code: "Код", link: "Ссылка",
     ready: "Готово", saving: "Сохранение…", saved: "Сохранено", new_short: "Новая заметка",
     load_fail: "Ошибка загрузки", save_fail: "Ошибка сохранения", init_fail: "Ошибка инициализации", error_prefix: "Ошибка",

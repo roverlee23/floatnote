@@ -36,8 +36,22 @@
         <button class="tool-btn" data-cmd="taskList" data-od-id="btn-task" data-i18n-title="task" title="待办"><i class="ph ph-list-checks"></i></button>
         <span class="divider"></span>
         <button class="tool-btn" data-cmd="codeBlock" data-od-id="btn-code" data-i18n-title="code" title="代码块"><i class="ph ph-code"></i></button>
+        <button class="tool-btn" data-cmd="table" data-od-id="btn-table" data-i18n-title="table" title="表格"><i class="ph ph-table"></i></button>
       </div>
-      <main class="editor" data-od-id="editor" id="editor"></main>
+      <main class="editor" data-od-id="editor" id="editor">
+        <div class="table-hotzones" id="table-hotzones" hidden>
+          <button class="table-hotzone table-hotzone-row" data-table-cmd="addRow" data-i18n-title="add_row" title="添加行" aria-label="添加行">+</button>
+          <button class="table-hotzone table-hotzone-column" data-table-cmd="addColumn" data-i18n-title="add_column" title="添加列" aria-label="添加列">+</button>
+        </div>
+      </main>
+      <div class="table-context-menu" id="table-context-menu" role="menu" hidden>
+        <button type="button" data-table-cmd="addRow" data-i18n="add_row">添加行</button>
+        <button type="button" data-table-cmd="deleteRow" data-i18n="delete_row">删除当前行</button>
+        <button type="button" data-table-cmd="addColumn" data-i18n="add_column">添加列</button>
+        <button type="button" data-table-cmd="deleteColumn" data-i18n="delete_column">删除当前列</button>
+        <div class="table-context-separator"></div>
+        <button type="button" class="danger" data-table-cmd="deleteTable" data-i18n="delete_table">删除表格</button>
+      </div>
       <footer class="statusbar" data-od-id="statusbar">
         <span class="status" data-od-id="status" id="status" data-i18n="ready">已就绪</span>
         <span class="meta" data-od-id="meta" id="meta"></span>

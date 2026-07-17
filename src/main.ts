@@ -7,9 +7,14 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { TaskList } from "@tiptap/extension-task-list";
 import { TaskItem } from "@tiptap/extension-task-item";
 import { Underline } from "@tiptap/extension-underline";
+import { Table } from "@tiptap/extension-table";
+import { TableRow } from "@tiptap/extension-table-row";
+import { TableHeader } from "@tiptap/extension-table-header";
+import { TableCell } from "@tiptap/extension-table-cell";
 import { Markdown } from "tiptap-markdown";
 import { openSettings, initSettings, applyAppearance, type Settings } from "./settings";
 import { t, applyLanguage } from "./i18n";
+import { shouldDeleteTable, tableAction, type TableAction } from "./table-actions";
 import "@phosphor-icons/web/regular";
 import "@phosphor-icons/web/fill";
 
@@ -40,6 +45,7 @@ async function initWindowPersistence() {
 
 async function init() {
   try {
+    void invoke("append_debug_log", { message: "frontend_init" });
     const s = await invoke<Settings>("get_settings");
     applyAppearance(s);
     applyLanguage(s.language ?? "zh");
@@ -51,6 +57,10 @@ async function init() {
         TaskList,
         TaskItem.configure({ nested: true }),
         Underline,
+        Table.configure({ resizable: false }),
+        TableRow,
+        TableHeader,
+        TableCell,
         Markdown.configure({ breaks: true }),
       ],
       content: "",
@@ -58,7 +68,9 @@ async function init() {
       onUpdate: () => {
         scheduleSave();
         updateActiveButtons();
+        updateTableHotzones();
       },
+      onSelectionUpdate: () => updateTableHotzones(),
     });
     bindToolbar();
     bindTitlebar();
@@ -71,15 +83,18 @@ async function init() {
     await initWindowPersistence();
     document.getElementById("btn-lock")?.addEventListener("mousedown", (e) => {
       locked = !locked;
+      void invoke("append_debug_log", { message: `frontend_pin_change locked=${locked}` });
       const btn = e.currentTarget as HTMLElement;
       btn.classList.toggle("is-locked", locked);
       const icon = btn.querySelector("i");
       if (icon) icon.className = locked ? "ph-fill ph-push-pin" : "ph ph-push-pin";
+      void invoke("set_window_pinned", { pinned: locked });
       e.preventDefault();
     });
     await getCurrentWindow().onFocusChanged((event) => {
+      void invoke("append_debug_log", { message: `frontend_focus_changed focused=${event.payload} locked=${locked}` });
       if (!event.payload && !locked) {
-        void getCurrentWindow().hide();
+        void invoke("handle_window_focus_lost");
       }
     });
   } catch (e) {
@@ -183,10 +198,210 @@ function bindToolbar() {
         case "codeBlock":
           editor.chain().focus().toggleCodeBlock().run();
           break;
+        case "table":
+          editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+          break;
       }
     });
   });
+  bindTableInteractions();
   updateActiveButtons();
+  updateTableHotzones();
+}
+
+function currentTableSize(): { rows: number; columns: number } | null {
+  const { $from } = editor.state.selection;
+  for (let depth = $from.depth; depth > 0; depth -= 1) {
+    const node = $from.node(depth);
+    if (node.type.name === "table") {
+      return { rows: node.childCount, columns: node.firstChild?.childCount ?? 0 };
+    }
+  }
+  return null;
+}
+
+function runTableCommand(action: TableAction) {
+  focusHoveredTable();
+  if (action === "deleteTable") {
+    editor.chain().focus().deleteTable().run();
+    hoveredTable = null;
+    updateTableHotzones();
+    return;
+  }
+  const size = currentTableSize();
+  if (!size) return;
+  if (action === "deleteRow" && shouldDeleteTable("row", size.rows, size.columns)) {
+    editor.chain().focus().deleteTable().run();
+    hoveredTable = null;
+    updateTableHotzones();
+    return;
+  }
+  if (action === "deleteColumn" && shouldDeleteTable("column", size.rows, size.columns)) {
+    editor.chain().focus().deleteTable().run();
+    hoveredTable = null;
+    updateTableHotzones();
+    return;
+  }
+  editor.chain().focus()[tableAction(action)]().run();
+  window.setTimeout(updateTableHotzones, 0);
+}
+
+function focusHoveredTable() {
+  if (!hoveredTable) return;
+  const cell = hoveredTable.querySelector("th, td");
+  if (!(cell instanceof HTMLElement)) return;
+  const rect = cell.getBoundingClientRect();
+  const position = editor.view.posAtCoords({ left: rect.left + 8, top: rect.top + 8 });
+  if (position) editor.commands.setTextSelection(position.pos);
+}
+
+const TABLE_GAP_HIT_HEIGHT = 14;
+
+function tablePosition(table: HTMLTableElement): number | null {
+  try {
+    const domPosition = editor.view.posAtDOM(table, 0);
+    const resolved = editor.state.doc.resolve(domPosition);
+    for (let depth = resolved.depth; depth > 0; depth -= 1) {
+      if (resolved.node(depth).type.name === "table") return resolved.before(depth);
+    }
+  } catch {
+    // The table may have been removed between the hit test and this click.
+  }
+  return null;
+}
+
+function tableGapAt(clientX: number, clientY: number): { table: HTMLTableElement; before: boolean } | null {
+  const editorElement = document.getElementById("editor");
+  if (!editorElement) return null;
+  const tables = editorElement.querySelectorAll<HTMLTableElement>(".tableWrapper > table");
+  for (const table of tables) {
+    const rect = table.getBoundingClientRect();
+    const inHorizontalRange = clientX >= rect.left - 10 && clientX <= rect.right + 10;
+    if (!inHorizontalRange) continue;
+    if (clientY >= rect.top - TABLE_GAP_HIT_HEIGHT && clientY < rect.top) {
+      return { table, before: true };
+    }
+    if (clientY > rect.bottom && clientY <= rect.bottom + TABLE_GAP_HIT_HEIGHT) {
+      return { table, before: false };
+    }
+  }
+  return null;
+}
+
+function insertParagraphAtTableGap(table: HTMLTableElement, before: boolean) {
+  const position = tablePosition(table);
+  if (position === null) return;
+  const tableNode = editor.state.doc.nodeAt(position);
+  if (!tableNode || tableNode.type.name !== "table") return;
+  const insertAt = before ? position : position + tableNode.nodeSize;
+  const paragraph = editor.schema.nodes.paragraph.create();
+  editor.view.dispatch(editor.state.tr.insert(insertAt, paragraph));
+  editor.commands.focus(insertAt + 1);
+  editor.commands.setTextSelection(insertAt + 1);
+}
+
+let hoveredTable: HTMLTableElement | null = null;
+
+function tableFromTarget(target: EventTarget | null): HTMLTableElement | null {
+  const element = target instanceof Element ? target : null;
+  const table = element?.closest("table");
+  return table instanceof HTMLTableElement && document.getElementById("editor")?.contains(table)
+    ? table
+    : null;
+}
+
+function updateTableHotzones() {
+  const editorElement = document.getElementById("editor");
+  const hotzones = document.getElementById("table-hotzones");
+  if (!editorElement || !hotzones || !hoveredTable || !editorElement.contains(hoveredTable)) {
+    if (hotzones) hotzones.hidden = true;
+    return;
+  }
+  const tableRect = hoveredTable.getBoundingClientRect();
+  hotzones.hidden = false;
+  hotzones.style.left = `${tableRect.left - 11}px`;
+  hotzones.style.top = `${tableRect.top - 11}px`;
+  hotzones.style.width = `${tableRect.width + 22}px`;
+  hotzones.style.height = `${tableRect.height + 22}px`;
+  const rowButton = hotzones.querySelector<HTMLElement>(".table-hotzone-row");
+  const columnButton = hotzones.querySelector<HTMLElement>(".table-hotzone-column");
+  if (rowButton) {
+    rowButton.style.left = "0px";
+    rowButton.style.top = `${tableRect.height}px`;
+  }
+  if (columnButton) {
+    columnButton.style.left = `${tableRect.width}px`;
+    columnButton.style.top = "0px";
+  }
+}
+
+function bindTableInteractions() {
+  const editorElement = document.getElementById("editor");
+  const hotzones = document.getElementById("table-hotzones");
+  const menu = document.getElementById("table-context-menu");
+  if (!editorElement || !hotzones || !menu) return;
+
+  editorElement.addEventListener("mousedown", (event) => {
+    if (!(event instanceof MouseEvent) || event.button !== 0) return;
+    if (tableFromTarget(event.target)) return;
+    const gap = tableGapAt(event.clientX, event.clientY);
+    if (!gap) return;
+    event.preventDefault();
+    insertParagraphAtTableGap(gap.table, gap.before);
+  });
+
+  editorElement.addEventListener("mouseover", (event) => {
+    const table = tableFromTarget(event.target);
+    if (table) {
+      hoveredTable = table;
+      updateTableHotzones();
+    }
+  });
+  editorElement.addEventListener("mouseout", (event) => {
+    const table = tableFromTarget(event.target);
+    const related = event.relatedTarget instanceof Node ? event.relatedTarget : null;
+    if (table && !table.contains(related) && !hotzones.contains(related)) {
+      window.setTimeout(() => {
+        if (!hotzones.matches(":hover")) {
+          hoveredTable = null;
+          updateTableHotzones();
+        }
+      }, 80);
+    }
+  });
+
+  editorElement.addEventListener("contextmenu", (event) => {
+    const table = tableFromTarget(event.target);
+    if (!table) return;
+    event.preventDefault();
+    hoveredTable = table;
+    const position = editor.view.posAtCoords({ left: event.clientX, top: event.clientY });
+    if (position) editor.commands.setTextSelection(position.pos);
+    menu.hidden = false;
+    menu.style.left = `${Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 8)}px`;
+    menu.style.top = `${Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 8)}px`;
+    updateTableHotzones();
+  });
+
+  hotzones.querySelectorAll<HTMLButtonElement>("[data-table-cmd]").forEach((button) => {
+    button.addEventListener("mousedown", (event) => event.stopPropagation());
+    button.addEventListener("click", () => {
+      runTableCommand(button.dataset.tableCmd as TableAction);
+      updateTableHotzones();
+    });
+  });
+  menu.querySelectorAll<HTMLButtonElement>("[data-table-cmd]").forEach((button) => {
+    button.addEventListener("click", () => {
+      runTableCommand(button.dataset.tableCmd as TableAction);
+      menu.hidden = true;
+      updateTableHotzones();
+    });
+  });
+  document.addEventListener("mousedown", (event) => {
+    if (!menu.contains(event.target as Node)) menu.hidden = true;
+  });
+  window.addEventListener("resize", updateTableHotzones);
+  editorElement.addEventListener("scroll", updateTableHotzones);
 }
 
 function updateActiveButtons() {
@@ -232,7 +447,14 @@ function updateActiveButtons() {
 function bindTitlebar() {
   document.getElementById("btn-new")?.addEventListener("click", () => void newNote());
   document.getElementById("btn-settings")?.addEventListener("click", openSettings);
-  document.getElementById("tl-close")?.addEventListener("click", () => void getCurrentWindow().hide());
+  document.getElementById("tl-close")?.addEventListener("click", () => {
+    void invoke("append_debug_log", { message: "frontend_close_button" });
+    locked = false;
+    document.getElementById("btn-lock")?.classList.remove("is-locked");
+    const icon = document.querySelector("#btn-lock i");
+    if (icon) icon.className = "ph ph-push-pin";
+    void invoke("dismiss_window_from_ui");
+  });
   document.getElementById("tl-min")?.addEventListener("click", () => void getCurrentWindow().minimize());
   document.getElementById("tl-max")?.addEventListener("click", () => void getCurrentWindow().toggleMaximize());
 }

@@ -34,7 +34,6 @@ src-tauri/gen
 AGENTS.md
 CLAUDE.md
 .vscode/
-docs/
 
 # macOS packaging outputs
 *.dmg
